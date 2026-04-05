@@ -1,136 +1,173 @@
-# FinanceOS — Finance Dashboard UI
+# FinanceOS — Finance Dashboard
 
-A responsive finance dashboard for viewing income, expenses, and insights. Built as a frontend assignment for Zorvyn FinTech (Job ID: CHHFUL).
+A multi-page, mobile-first personal finance dashboard for tracking income, expenses, insights, goals, and balances. Built as a frontend assignment for Zorvyn FinTech (Job ID: CHHFUL).
 
-**Full technical reference:** [DOCUMENTATION.md](./DOCUMENTATION.md) (architecture, state API, data model, file map).
-
-## Live Preview
-
-Run the app locally using the steps below.
+**Full technical reference:** [DOCUMENTATION.md](./DOCUMENTATION.md) — architecture, state API, data model, all utilities and components.
 
 ---
 
-## Tech Stack
+## Quick Start
 
-| Layer       | Choice                         | Notes                                                |
-|-------------|--------------------------------|------------------------------------------------------|
-| Framework   | React 19 + Vite 8              | Fast dev server, modern React                        |
-| Styling     | Tailwind CSS v4 (`@tailwindcss/vite`) | `@import "tailwindcss"` + `@theme` design tokens |
-| Charts      | Recharts 3                     | Composable charts aligned with React               |
-| State       | Context API + `useReducer`     | Global transactions, role, filters, active page      |
-| Persistence | `localStorage`                 | Transaction list survives refresh                  |
+### Prerequisites
 
----
+- **Node.js** 18 or later
+- **npm** 9 or later
 
-## Prerequisites
-
-- Node.js 18+
-- npm 9+
-
-## Install and run
-
-From the project root (`finance-dashboard`):
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/ChinmayCJ7/finance-dashboard.git
+cd finance-dashboard
+
+# Install dependencies
 npm install
+
+# Start the development server
 npm run dev
 ```
 
-The app serves at **http://localhost:5173**.
+Open **http://localhost:5173** in your browser. The app loads with 47 seed transactions covering January–March 2026.
 
-### Other scripts
+### NPM Scripts
 
-```bash
-npm run build    # production build
-npm run preview  # preview production build locally
-npm run lint     # ESLint
-```
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start Vite dev server (http://localhost:5173) |
+| `npm run build` | Production bundle → `dist/` |
+| `npm run preview` | Serve production build locally |
+| `npm run lint` | Run ESLint across the codebase |
+
+---
+## Live Demo
+https://finance-dashboard-chi.vercel.app
+---
+
+
+## Tech Stack
+
+| Layer | Technology | Version | Notes |
+|-------|-----------|---------|-------|
+| UI Framework | React | 19.2.4 | Concurrent features, StrictMode |
+| Build Tool | Vite | 8.0.1 | Fast HMR, ESM-native |
+| Styling | Tailwind CSS | 4.2.2 | `@tailwindcss/vite` plugin, `@theme` tokens |
+| Charts | Recharts | 3.8.1 | Composable React chart components |
+| Global State | React Context + `useReducer` | — | No external state library |
+| Persistence | `localStorage` | — | `fd_transactions` key |
+| Linting | ESLint | 9.39.4 | React Hooks + React Refresh plugins |
 
 ---
 
-## Features
+## Key Features
 
-### Dashboard
-
-- Summary cards — total balance, income, expenses (plus savings rate callout)
-- Monthly bar chart — income vs expenses by month
-- Balance trend — area chart of running balance over time
-- Spending breakdown — donut chart by category
-- Recent transactions — six most recent entries
-- Initial skeleton loading state (~900ms) while the overview “loads”
+### Overview (Dashboard)
+- Summary cards showing total balance, income, expenses, and savings rate
+- Monthly income vs. expenses bar chart
+- Running balance area chart over time
+- Spending breakdown donut chart by category
+- Six most recent transactions list
+- Skeleton loading state (~900 ms) on first render
 
 ### Transactions
+- Full data table with date, description, category, type, and amount columns
+- Text search across description and category
+- Filter by transaction type (income / expense), category, and month
+- Sort by date, amount, or description (ascending / descending toggle)
+- **Admin only:** add, edit, and delete transactions via modal form with validation
+- Export current filtered and sorted view as **CSV** or **JSON**
+- Empty state when no rows match active filters
 
-- Table with date, description, category, type, amount
-- Search — description or category
-- Filters — type (income/expense), category, month
-- Sort — date, amount, or description (asc/desc)
-- **Admin only** — add, edit, delete with modal form validation
-- Empty state when no rows match
+### Expenses (Insights)
+- Highest spending category card with percentage share
+- Month-on-month expense change with directional indicator (up/down)
+- Savings rate card with plain-English guidance
+- Horizontal bar chart of spending by category
+- Monthly expense trend bar chart
+- Four auto-generated plain-English observations
 
-### Insights
+### Goals
+- Savings goal with semi-gauge progress chart
+- Date range selector and adjustable goal amount
+- Savings comparison area chart (current month vs. previous month)
+- Six category budget cards with progress indicators
 
-- Top spending category and share of expenses
-- Month-on-month expense change
-- Savings rate with short guidance
-- Horizontal bar chart — category breakdown
-- Monthly expense trend
-- Auto-generated plain-English observations
+### Balances
+- Three balance summary cards: Total Balance, Available, and Monthly Flow
+- Values computed from all loaded transactions
 
-### Layout and roles
+### Settings
+- Role toggle: **Viewer** (read-only) or **Admin** (full CRUD)
+- Same role toggle is also accessible in the Sidebar
 
-- **Viewer / Admin** — toggle in the sidebar; admin can mutate transactions
-- **Responsive shell** — sticky mobile header, hamburger menu, overlay and Escape to close, safe-area padding; desktop fixed sidebar (`lg`)
-- **In-app navigation** — no React Router; active view driven by context (`dashboard` | `transactions` | `insights`)
+### Bills
+- Placeholder page for future recurring-bill management
 
-### Data
-
-- **Seed data** — 47 mock transactions across January–March 2026 (`src/data/mockData.js`)
-- **Persistence** — adds/edits/deletes sync to `localStorage` under `fd_transactions`
+### Layout and Navigation
+- **No React Router** — page switching via `activePage` in global context
+- Fixed sidebar on desktop (1024 px and above); hamburger drawer on mobile
+- Overlay + Escape key closes mobile menu; body scroll locked when open
+- Auto-closes mobile menu when viewport resizes to desktop width
+- iOS safe-area padding via `env(safe-area-inset-*)`
 
 ---
 
-## Project structure
+## Project Structure
 
 ```
-src/
-├── main.jsx                 # React root
-├── App.jsx                  # Provider, layout, mobile nav, page switcher
-├── index.css                # Tailwind import + @theme tokens (fonts, colors)
-├── App.css                  # App-level styles
-├── context/
-│   └── AppContext.jsx       # Reducer: transactions, role, filters, active page
-├── data/
-│   └── mockData.js          # Categories, colors, INITIAL_TRANSACTIONS
-├── components/
-│   ├── Sidebar.jsx          # Nav + role switcher
-│   ├── SummaryCard.jsx      # Metric cards
-│   ├── TransactionModal.jsx # Add/edit form + validation
-│   └── SkeletonLoader.jsx   # Dashboard loading skeleton
-├── pages/
-│   ├── Dashboard.jsx        # Overview + charts
-│   ├── Transactions.jsx     # Table + filters
-│   └── Insights.jsx         # Analysis + observations
-└── utils/
-    └── helpers.js           # Summary, aggregates, formatting (e.g. INR)
+finance-dashboard/
+├── index.html                   # HTML entry point, #root mount
+├── vite.config.js               # Vite + React + Tailwind plugins
+├── eslint.config.js             # ESLint flat config
+├── package.json
+└── src/
+    ├── main.jsx                 # ReactDOM.createRoot, StrictMode
+    ├── App.jsx                  # AppProvider, Layout, mobile nav, page switcher
+    ├── index.css                # Tailwind import + @theme design tokens
+    ├── App.css                  # Additional component styles
+    ├── context/
+    │   └── AppContext.jsx       # Reducer: transactions, role, filters, activePage
+    ├── data/
+    │   └── mockData.js          # CATEGORIES, CATEGORY_COLORS, INITIAL_TRANSACTIONS (47 rows)
+    ├── components/
+    │   ├── MainHeader.jsx       # Top bar: current date, search input, notifications
+    │   ├── Sidebar.jsx          # Navigation drawer + role toggle + user chip
+    │   ├── SummaryCard.jsx      # Reusable metric card
+    │   ├── TransactionModal.jsx # Add / edit transaction form with validation
+    │   └── SkeletonLoader.jsx   # Dashboard loading skeleton
+    ├── pages/
+    │   ├── Dashboard.jsx        # Overview: charts + summary cards + recent transactions
+    │   ├── Transactions.jsx     # Filter, sort, export, CRUD table
+    │   ├── Insights.jsx         # Expense analysis and observations
+    │   ├── Goals.jsx            # Savings goals and category budgets
+    │   ├── Balances.jsx         # Account balance overview
+    │   ├── Settings.jsx         # Role preference toggle
+    │   └── PlaceholderPage.jsx  # Generic "coming soon" shell (used for Bills)
+    └── utils/
+        ├── helpers.js           # Aggregation, formatting, filtering utilities
+        └── exportTransactions.js # CSV and JSON download helpers
 ```
 
 ---
 
-## Design notes
+## Design Notes
 
-- **Tailwind v4** is wired through Vite (`vite.config.js` uses `@tailwindcss/vite`); theme tokens live in `index.css` (`@theme`).
-- **Typography** — Inter (body) and Manrope (display) via Google Fonts in CSS.
-- **Currency** — `Intl.NumberFormat` for INR-style display.
-- **No heavy UI kit** — layout and components are custom, styled with utilities and shared tokens.
+- **Tailwind v4** integrates via the `@tailwindcss/vite` plugin — no `tailwind.config.js` needed. All design tokens (colors, fonts, radii, shadows) live under `@theme` in `src/index.css`.
+- **Typography** uses Inter (body / `font-sans`) and Manrope (headings / `font-display`) loaded via Google Fonts in `index.css`.
+- **Color palette** is a light shell with a teal primary (`#2a9d8f`) and a near-black sidebar (`#161a1d`). All semantic color names map to Tailwind utility classes (e.g. `bg-background`, `text-on-surface`, `bg-primary`).
+- **Currency** is formatted with `Intl.NumberFormat("en-IN")` producing Indian Rupee (INR) notation with zero decimal places.
+- **No router library** — navigation is driven entirely by `state.activePage` in global context, keeping the bundle small.
+- **No heavy UI kit** — all layout and components are hand-crafted with Tailwind utilities and shared `@theme` tokens.
 
 ---
 
-## Assumptions
+## Assumptions and Limitations
 
-- Mock data spans January–March 2026.
-- Roles are simulated in the UI only (no auth backend).
-- Balance is cumulative income minus expenses over all loaded transactions.
+- **No backend** — all data is local to the browser. Clearing site data resets transactions to the 47-row seed unless a CSV/JSON export has been saved.
+- **Roles are UI-only** — there is no authentication boundary; switching Viewer / Admin is purely cosmetic access control.
+- **Balance calculation** is cumulative (total income minus total expenses across all loaded transactions), not a per-account ledger balance.
+- **Seed data** spans January–March 2026 with Indian commerce contexts (INR amounts, local merchant names).
+- **Insights** that compare two months require at least two calendar months of data in the loaded transaction list.
+- **Goals and Bills pages** contain static/placeholder content; no persistence or real goal-tracking logic is implemented.
 
 ---
 
