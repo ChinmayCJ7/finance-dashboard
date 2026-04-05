@@ -39,6 +39,10 @@ Open **http://localhost:5173** in your browser. The app loads with 47 seed trans
 | `npm run lint` | Run ESLint across the codebase |
 
 ---
+## Live Demo
+https://finance-dashboard-chi.vercel.app
+---
+
 
 ## Tech Stack
 
